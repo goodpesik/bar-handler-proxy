@@ -12,10 +12,14 @@ fi
 # 2. Визначення операційної системи
 OS_TYPE=$(uname)
 IS_ANDROID=false
+IS_WSL=false
 if [[ "$OS_TYPE" == "Linux" ]]; then
     if [[ "$(uname -o)" == "Android" ]]; then
         IS_ANDROID=true
         echo "Detected Android system."
+    elif grep -qE "Microsoft|WSL" /proc/version; then
+        IS_WSL=true
+        echo "Detected WSL system."
     else
         echo "Detected Linux system."
     fi
@@ -23,6 +27,39 @@ elif [[ "$OS_TYPE" == "Windows_NT" ]]; then
     echo "Detected Windows system via WSL."
 else
     echo "Unsupported OS: $OS_TYPE"
+    exit 1
+fi
+
+# 3. Оновлення системи
+echo "Updating system..."
+sudo apt update && sudo apt upgrade -y
+
+# 4. Встановлення Node.js та npm
+echo "Installing Node.js..."
+sudo apt install -y nodejs npm openssl
+
+# 5. Генерація самопідписаного сертифіката
+echo "Generating self-signed certificate for localhost..."
+CERT_DIR="./certs"
+mkdir -p $CERT_DIR
+
+openssl req -x509 -newkey rsa:2048 -keyout $CERT_DIR/key.pem -out $CERT_DIR/cert.pem -days 365 -nodes -subj "/CN=localhost"
+
+# 6. Додавання сертифіката до довірених
+if [[ "$IS_ANDROID" == true ]]; then
+    echo "Android detected. Please manually add the certificate to your trusted store:"
+    echo "1. Copy the cert.pem to your Android storage:"
+    echo "   cp $CERT_DIR/cert.pem /storage/emulated/0/cert.pem"
+    echo "2. Go to Settings > Security > Install certificate, and select cert.pem."
+elif [[ "$IS_WSL" == true ]]; then
+    echo "Adding certificate to Windows trusted store (via WSL)..."
+    powershell.exe -Command "Start-Process powershell -Verb runAs -ArgumentList \"Import-Certificate -FilePath '$PWD/$CERT_DIR/cert.pem' -CertStoreLocation Cert:\\LocalMachine\\Root\""
+elif [[ "$OS_TYPE" == "Linux" ]]; then
+    echo "Adding certificate to trusted store on Linux..."
+    sudo cp $CERT_DIR/cert.pem /usr/local/share/ca-certificates/localhost.crt
+    sudo update-ca-certificates
+else
+    echo "Unsupported system for automatic certificate installation."
     exit 1
 fi
 
