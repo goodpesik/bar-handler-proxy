@@ -53,7 +53,8 @@ if [[ "$IS_ANDROID" == true ]]; then
     echo "2. Go to Settings > Security > Install certificate, and select cert.pem."
 elif [[ "$IS_WSL" == true ]]; then
     echo "Adding certificate to Windows trusted store (via WSL)..."
-    powershell.exe -Command "Start-Process powershell -Verb runAs -ArgumentList \"Import-Certificate -FilePath '$PWD/$CERT_DIR/cert.pem' -CertStoreLocation Cert:\\LocalMachine\\Root\""
+    powershell.exe -Command "Start-Process powershell -Verb runAs -ArgumentList 'Import-Certificate -FilePath \"$(wslpath -w $PWD/$CERT_DIR/cert.pem)\" -CertStoreLocation Cert:\\LocalMachine\\Root'" 2>&1 | tee add_cert.log
+    echo "Check add_cert.log for details if the operation fails."
 elif [[ "$OS_TYPE" == "Linux" ]]; then
     echo "Adding certificate to trusted store on Linux..."
     sudo cp $CERT_DIR/cert.pem /usr/local/share/ca-certificates/localhost.crt
