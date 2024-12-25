@@ -58,7 +58,7 @@ prompt = no
 CN = $IP_ADDRESS
 
 [v3_req]
-keyUsage = keyEncipherment, dataEncipherment
+keyUsage = critical, keyEncipherment, digitalSignature
 extendedKeyUsage = serverAuth
 subjectAltName = @alt_names
 
