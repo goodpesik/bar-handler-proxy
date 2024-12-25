@@ -64,40 +64,7 @@ else
     exit 1
 fi
 
-# 3. Оновлення системи
-echo "Updating system..."
-sudo apt update && sudo apt upgrade -y
-
-# 4. Встановлення Node.js та npm
-echo "Installing Node.js..."
-sudo apt install -y nodejs npm openssl
-
-# 5. Генерація самопідписаного сертифіката
-echo "Generating self-signed certificate for localhost..."
-CERT_DIR="./certs"
-mkdir -p $CERT_DIR
-
-openssl req -x509 -newkey rsa:2048 -keyout $CERT_DIR/key.pem -out $CERT_DIR/cert.pem -days 365 -nodes -subj "/CN=localhost"
-
-# 6. Додавання сертифіката до довірених
-if [[ "$IS_ANDROID" == true ]]; then
-    echo "Android detected. Please manually add the certificate to your trusted store:"
-    echo "1. Copy the cert.pem to your Android storage:"
-    echo "   cp $CERT_DIR/cert.pem /storage/emulated/0/cert.pem"
-    echo "2. Go to Settings > Security > Install certificate, and select cert.pem."
-elif [[ "$OS_TYPE" == "Linux" ]]; then
-    echo "Adding certificate to trusted store on Linux..."
-    sudo cp $CERT_DIR/cert.pem /usr/local/share/ca-certificates/localhost.crt
-    sudo update-ca-certificates
-elif [[ "$OS_TYPE" == "Windows_NT" ]]; then
-    echo "Adding certificate to Windows trusted store (via WSL)..."
-    powershell.exe -Command "Start-Process powershell -Verb runAs -ArgumentList \"Import-Certificate -FilePath '$PWD/$CERT_DIR/cert.pem' -CertStoreLocation Cert:\\LocalMachine\\Root\""
-else
-    echo "Unsupported system for automatic certificate installation."
-    exit 1
-fi
-
-# 6. Створення Node.js-проксі
+# 7. Створення Node.js-проксі
 echo "Setting up HTTPS proxy server..."
 
 cat <<EOL > https-proxy.js
@@ -119,12 +86,12 @@ const httpsOptions = {
     cert: fs.readFileSync('${CERT_DIR}/cert.pem'),
 };
 
-https.createServer(httpsOptions, app).listen(443, () => {
+https.createServer(httpsOptions, app).listen(443, '0.0.0.0', () => {
     console.log('HTTPS Proxy running on https://localhost');
 });
 EOL
 
-# 7. Встановлення залежностей для Node.js
+# 8. Встановлення залежностей для Node.js
 echo "Installing Node.js dependencies..."
 npm install express http-proxy-middleware
 
