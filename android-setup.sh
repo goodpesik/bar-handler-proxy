@@ -41,7 +41,11 @@ echo "Updating system..."
 
 # 4. Встановлення Node.js та npm
 echo "Installing Node.js..."
- apt install -y nodejs npm openssl
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+source ~/.bashrc
+nvm install node
+pkg install openssl
+
 
 # 5. Генерація самопідписаного сертифіката
 echo "Generating self-signed certificate for $IP_ADDRESS..."
