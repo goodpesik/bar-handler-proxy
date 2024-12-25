@@ -33,12 +33,12 @@ This script sets up an HTTPS proxy server for local development, allowing you to
 
 5. **Make the Script Executable**:
    ```bash
-   chmod +x setup-proxy.sh
+   chmod +x setup-bar-handler-proxy.sh
    ```
 
 6. **Run the Script**:
    ```bash
-   ./setup-proxy.sh [port]
+   ./setup-bar-handler-proxy.sh [port]
    ```
    - Replace `[port]` with the port your local server is running on (default: `3939`).
 
@@ -75,12 +75,12 @@ This script sets up an HTTPS proxy server for local development, allowing you to
 
 4. **Make the Script Executable**:
    ```bash
-   chmod +x setup-proxy.sh
+   chmod +x setup-bar-handler-proxy.sh
    ```
 
 5. **Run the Script**:
    ```bash
-   ./setup-proxy.sh [port]
+   ./setup-bar-handler-proxy.sh [port]
    ```
    - Replace `[port]` with the port your local server is running on (default: `3939`).
 
