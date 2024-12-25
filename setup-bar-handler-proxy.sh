@@ -112,8 +112,8 @@ const httpsOptions = {
     cert: fs.readFileSync('${CERT_DIR}/cert.pem'),
 };
 
-https.createServer(httpsOptions, app).listen(443, '0.0.0.0', () => {
-    console.log('HTTPS Proxy running on https://$IP_ADDRESS');
+https.createServer(httpsOptions, app).listen($PORT, '0.0.0.0', () => {
+    console.log('HTTPS Proxy running on https://$IP_ADDRESS:$PORT');
 });
 EOL
 
