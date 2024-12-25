@@ -27,7 +27,7 @@ mkdir -p $CERT_DIR
 if [ ! -f "$CERT_FILE" ] || [ ! -f "$KEY_FILE" ]; then
   echo "Generating self-signed certificate..."
   openssl req -new -x509 -days 365 -extensions v3_ca \
-    -keyout "$KEY_FILE" -out "$CERT_FILE" \
+    -keyout "$KEY_FILE" -out "$CERT_FILE" -nodes \
     -subj "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=localhost"
   echo "Certificate generated. Please add it to your Android trusted store."
   echo "1. Copy $CERT_FILE to your Android storage:"
