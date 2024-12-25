@@ -65,7 +65,7 @@ https.createServer(httpsOptions, app).listen(9999, '0.0.0.0', () => {
 EOL
 
 echo "Installing Node.js dependencies..."
-npm install http-proxy
+npm install http-proxy http-proxy-middleware express
 
 # Start the HTTPS proxy server
 echo "Starting HTTPS proxy server on port $PORT..."
