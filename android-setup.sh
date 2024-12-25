@@ -59,8 +59,8 @@ const httpsOptions = {
     cert: fs.readFileSync('${CERT_DIR}/cert.pem'),
 };
 
-https.createServer(httpsOptions, app).listen(443, '0.0.0.0', () => {
-    console.log('HTTPS Proxy running on https://$IP_ADDRESS');
+https.createServer(httpsOptions, app).listen(9999, '0.0.0.0', () => {
+    console.log('Put this address inside barHandler settings $IP_ADDRESS:9999');
 });
 EOL
 

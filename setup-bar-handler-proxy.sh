@@ -113,7 +113,7 @@ const httpsOptions = {
 };
 
 https.createServer(httpsOptions, app).listen(9999, '0.0.0.0', () => {
-    console.log('HTTPS Proxy running on https://$IP_ADDRESS:9999');
+    console.log('Put this address inside barHandler settings $IP_ADDRESS:9999');
 });
 EOL
 
