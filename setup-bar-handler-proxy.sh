@@ -128,14 +128,6 @@ EOL
 echo "Installing Node.js dependencies..."
 npm install express http-proxy-middleware
 
-# 8. Інструкції для Android
-if [[ "$OS_TYPE" == "Linux" ]] && [[ "$(uname -o)" == "Android" ]]; then
-    echo "Detected Android system. Please manually add the certificate to your trusted store:"
-    echo "1. Copy the cert.pem to your Android storage:"
-    echo "   cp $CERT_DIR/cert.pem /storage/emulated/0/cert.pem"
-    echo "2. Go to Settings > Security > Install certificate, and select cert.pem."
-fi
-
 # 9. Запуск HTTPS Proxy
 echo "Starting HTTPS proxy server..."
 node https-proxy.js
