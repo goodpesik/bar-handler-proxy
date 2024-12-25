@@ -13,6 +13,8 @@ fi
 OS_TYPE=$(uname)
 IS_ANDROID=false
 IS_WSL=false
+IP_ADDRESS="localhost"
+
 if [[ "$OS_TYPE" == "Linux" ]]; then
     if [[ "$(uname -o)" == "Android" ]]; then
         IS_ANDROID=true
@@ -20,6 +22,9 @@ if [[ "$OS_TYPE" == "Linux" ]]; then
     elif grep -qE "Microsoft|WSL" /proc/version; then
         IS_WSL=true
         echo "Detected WSL system."
+        # Отримання IP-адреси для WSL
+        IP_ADDRESS=$(hostname -I | awk '{print $1}')
+        echo "Detected WSL IP address: $IP_ADDRESS"
     else
         echo "Detected Linux system."
     fi
@@ -39,11 +44,32 @@ echo "Installing Node.js..."
 sudo apt install -y nodejs npm openssl
 
 # 5. Генерація самопідписаного сертифіката
-echo "Generating self-signed certificate for localhost..."
+echo "Generating self-signed certificate for $IP_ADDRESS..."
 CERT_DIR="./certs"
 mkdir -p $CERT_DIR
 
-openssl req -x509 -newkey rsa:2048 -keyout $CERT_DIR/key.pem -out $CERT_DIR/cert.pem -days 365 -nodes -subj "/CN=localhost"
+cat > cert_config.cnf <<EOL
+[req]
+distinguished_name = req_distinguished_name
+x509_extensions = v3_req
+prompt = no
+
+[req_distinguished_name]
+CN = $IP_ADDRESS
+
+[v3_req]
+keyUsage = keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+IP.1 = $IP_ADDRESS
+EOL
+
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout $CERT_DIR/key.pem \
+    -out $CERT_DIR/cert.pem \
+    -config cert_config.cnf
 
 # 6. Додавання сертифіката до довірених
 if [[ "$IS_ANDROID" == true ]]; then
@@ -87,7 +113,7 @@ const httpsOptions = {
 };
 
 https.createServer(httpsOptions, app).listen(443, '0.0.0.0', () => {
-    console.log('HTTPS Proxy running on https://localhost');
+    console.log('HTTPS Proxy running on https://$IP_ADDRESS');
 });
 EOL
 
