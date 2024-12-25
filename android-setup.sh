@@ -28,7 +28,7 @@ if [ ! -f "$CERT_FILE" ] || [ ! -f "$KEY_FILE" ]; then
   echo "Generating self-signed certificate..."
   openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 \
     -keyout "$KEY_FILE" -out "$CERT_FILE" \
-    -subj "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=localhost"
+    -subj "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=localhost:9999"
   echo "Certificate generated. Please add it to your Android trusted store."
   echo "1. Copy $CERT_FILE to your Android storage:"
   echo "   cp $CERT_FILE /storage/emulated/0/cert.pem"
