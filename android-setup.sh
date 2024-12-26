@@ -21,15 +21,39 @@ pkg update && pkg upgrade -y
 echo "Installing dependencies..."
 pkg install -y nodejs openssl
 
-# Generate self-signed certificate if not exists
+# Generate OpenSSL configuration file
+echo "Creating OpenSSL configuration file..."
+cat > $OPENSSL_CNF << 'EOF'
+[req]
+default_bits       = 2048
+default_md         = sha256
+distinguished_name = req_distinguished_name
+x509_extensions    = v3_req
+prompt             = no
+
+[req_distinguished_name]
+C  = US
+ST = State
+L  = City
+O  = Organization
+OU = Unit
+CN = localhost
+
+[v3_req]
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = localhost
+IP.1 = 127.0.0.1
+EOF
+
+# Generate self-signed certificate with SAN
 echo "Checking for certificates..."
 mkdir -p $CERT_DIR
 if [ ! -f "$CERT_FILE" ] || [ ! -f "$KEY_FILE" ]; then
-  echo "Generating self-signed certificate..."
-  openssl genrsa -out certs/key.pem 2048
-  openssl req -new -x509 -days 365 \
-    -keyout "$KEY_FILE" -out "$CERT_FILE" -nodes \
-    -config openssl.cnf
+  echo "Generating self-signed certificate with SAN..."
+  openssl genrsa -out $KEY_FILE 2048
+  openssl req -new -x509 -days 365 -key $KEY_FILE -out $CERT_FILE -config $OPENSSL_CNF
   echo "Certificate generated. Please add it to your Android trusted store."
   echo "1. Copy $CERT_FILE to your Android storage:"
   echo "   cp $CERT_FILE /storage/emulated/0/cert.pem"
