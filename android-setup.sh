@@ -3,8 +3,8 @@
 # Default configuration
 PORT=3939
 CERT_DIR="certs"
-CERT_FILE="$CERT_DIR/cert.pem"
-KEY_FILE="$CERT_DIR/key.pem"
+CERT_FILE="$CERT_DIR/ca_cert.pem"
+KEY_FILE="$CERT_DIR/ca_key.pem"
 OPENSSL_CNF="$CERT_DIR/openssl.cnf"
 PKCS12_FILE="$CERT_DIR/cert.p12"
 
@@ -31,7 +31,7 @@ cat > "$OPENSSL_CNF" << 'EOF'
 default_bits       = 2048
 default_md         = sha256
 distinguished_name = req_distinguished_name
-x509_extensions    = v3_req
+x509_extensions    = v3_ca
 prompt             = no
 
 [req_distinguished_name]
@@ -40,28 +40,28 @@ ST = State
 L  = City
 O  = Organization
 OU = Unit
-CN = localhost
+CN = Custom CA
 
-[v3_req]
+[v3_ca]
 subjectAltName = @alt_names
+basicConstraints = critical,CA:true
+keyUsage = critical,keyCertSign,cRLSign
 
 [alt_names]
 DNS.1 = localhost
 IP.1 = 127.0.0.1
 EOF
 
-# Generate self-signed certificate with SAN
+# Generate CA certificate
 echo "Checking for certificates..."
 if [ ! -f "$CERT_FILE" ] || [ ! -f "$KEY_FILE" ]; then
-  echo "Generating self-signed certificate with SAN..."
+  echo "Generating self-signed CA certificate..."
   openssl genrsa -out "$KEY_FILE" 2048
-  openssl req -new -x509 -days 365 -key "$KEY_FILE" -out "$CERT_FILE" -config "$OPENSSL_CNF"
-   echo "Certificate generated. Creating PKCS#12 file..."
-  openssl pkcs12 -export -out "$PKCS12_FILE" -inkey "$KEY_FILE" -in "$CERT_FILE" -name "Localhost Certificate" -password pass:1111
-  echo "Certificate generated. Please add it to your Android trusted store."
+  openssl req -new -x509 -days 365 -key "$KEY_FILE" -out "$CERT_FILE" -config "$OPENSSL_CNF" -extensions v3_ca
+  echo "CA certificate generated. Please add it to your Android trusted store."
   echo "1. Copy $CERT_FILE to your Android storage:"
-  echo "   cp $CERT_FILE /storage/emulated/0/cert.pem"
-  echo "2. Go to Settings > Security > Install certificate and select cert.pem."
+  echo "   cp $CERT_FILE /storage/emulated/0/ca_cert.pem"
+  echo "2. Go to Settings > Security > Install certificate and select ca_cert.pem."
 else
   echo "Certificates already exist. Skipping generation."
 fi
