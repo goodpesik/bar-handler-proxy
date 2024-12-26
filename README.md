@@ -13,7 +13,7 @@ This script sets up an HTTPS proxy server for local development, allowing you to
 ### For Android (via Termux)
 
 1. **Install Termux**:
-   - Download Termux from [F-Droid](https://f-droid.org/packages/com.termux/) or another trusted source.
+   - Download Termux from https://play.google.com/store/apps/details?id=com.termux
 
 2. **Update Termux Packages**:
    ```bash
@@ -22,7 +22,7 @@ This script sets up an HTTPS proxy server for local development, allowing you to
 
 3. **Install Required Packages**:
    ```bash
-   pkg install git nodejs openssl
+   pkg install git
    ```
 
 4. **Clone the Repository**:
@@ -33,20 +33,16 @@ This script sets up an HTTPS proxy server for local development, allowing you to
 
 5. **Make the Script Executable**:
    ```bash
-   chmod +x setup-bar-handler-proxy.sh
+   chmod +x android-setup.sh
    ```
 
 6. **Run the Script**:
    ```bash
-   ./setup-bar-handler-proxy.sh [port]
+   ./android-setup.sh
    ```
    - Replace `[port]` with the port your local server is running on (default: `3939`).
 
 7. **Add the Certificate to Trusted Stores**:
-   - Copy the certificate to your Android device:
-     ```bash
-     cp ./certs/cert.pem /storage/emulated/0/cert.pem
-     ```
    - Install the certificate via **Settings → Security → Install Certificate**.
 
 ---
