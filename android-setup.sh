@@ -5,6 +5,7 @@ PORT=3939
 CERT_DIR="certs"
 CERT_FILE="$CERT_DIR/cert.pem"
 KEY_FILE="$CERT_DIR/key.pem"
+OPENSSL_CNF="$CERT_DIR/openssl.cnf"
 
 # Check for provided port
 if [ ! -z "$1" ]; then
