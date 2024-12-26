@@ -1,14 +1,110 @@
-# bar-handler-proxy
-Proxy from http to https to work with VchasnoKasa and Checkbox DeviceManager
+# Bar Handler Proxy
+Проксі для роботи з ВчасноКаса Device Manager
 
-# HTTPS Proxy Setup Script
+# Вастановити ВчасноКаса Device Manager
+Завантажте та встановіть VchasnoKasa DeviceManager для вашої операційної системи з [офіційного сайту](https://wiki-kasa.vchasno.ua/uk/DeviceManager/Start/intallation).
 
-This script sets up an HTTPS proxy server for local development, allowing you to access a local HTTP server over HTTPS. It automatically generates a self-signed certificate and configures the environment for:
-- Linux
-- Windows (via WSL)
-- Android (via Termux)
+# Налаштування POS-термінала
+Дотримуйтесь інструкцій з [офіційного сайту](https://wiki-kasa.vchasno.ua/uk/DeviceManager/Functionality/Devices/Terminals).
 
-## Installation and Usage
+## Встановлення Bar Handler Proxy
+Після встановлення VchasnoKasa DeviceManager та налаштування POS-термінала, необхідно встановити Bar Handler Proxy.
+
+### Для Android (через Termux)
+
+1. **Встановіть Termux:**:
+   - Завантажте Termux з https://play.google.com/store/apps/details?id=com.termux
+
+2. **Оновити пакети**:
+   ```bash
+   pkg update && pkg upgrade
+   ```
+
+3. **Встановити git**:
+   ```bash
+   pkg install git
+   ```
+
+4. **Клонуємо репозиторій**:
+   ```bash
+   git clone https://github.com/goodpesik/bar-handler-proxy.git
+   cd bar-handler-proxy
+   ```
+
+5. **Зробіть скрипт виконуваним:**:
+   ```bash
+   chmod +x android-setup.sh
+   ```
+
+6. **Запустіть скрипт:**:
+   ```bash
+   ./android-setup.sh
+   ```
+
+7. **Додайте сертифікат до довірених**:
+   - Встановіть сертифікат через **Settings → Security → Install Certificate → CA Certificate**.
+   - Сертифікат має бути розташований у сховищі Termux: `bar-handler-proxy/certs/cert.pem`.
+
+---
+
+### Для Windows (через WSL)
+
+1. **Встановіть WSL**:
+   - Відкрийте PowerShell (від імені адміністратора) та виконайте:
+     ```bash
+     wsl --install
+     ```
+   - Перезавантажте систему, якщо це потрібно.
+
+2. **Встановлення пакетів**:
+   - Запустіть Ubuntu (або іншу WSL-дистрибутиву) і виконайте:
+     ```bash
+     sudo apt update && sudo apt upgrade -y
+     sudo apt install git nodejs npm openssl -y
+     ```
+
+3. **Клонуємо репозиторій**:
+   ```bash
+   git clone https://github.com/goodpesik/bar-handler-proxy.git
+   cd bar-handler-proxy
+   ```
+
+4. **Зробіть скрипт виконуваним:**:
+   ```bash
+   chmod +x setup-bar-handler-proxy.sh
+   ```
+
+5. **Запустіть скрипт:**:
+   ```bash
+   ./setup-bar-handler-proxy.sh
+   ```
+
+6. **Додайте сертифікат до довірених у Windows**:
+   - Скрипт намагається додати сертифікат автоматично через PowerShell. Якщо це не вдається:
+     1. Знайдіть сертифікат: `./certs/cert.pem`.
+     2. Скопіюйте його на вашу систему Windows:
+        ```bash
+        cp ./certs/cert.pem /mnt/c/Users/<YourUsername>/Desktop/cert.pem
+        ```
+     3. Відкрийте сертифікат на Windows і встановіть його:
+        - Натисніть **Встановити сертифікат**.
+        - Оберіть **Локальна машина**.
+        - Вкажіть **Trusted Root Certification Authorities** як місце встановлення..
+
+
+---
+
+# bar-handler-proxy English
+Proxy from http to https to work with VchasnoKasa DeviceManager
+
+# Install VchasnoKasa DeviceManager
+Download and install VchasnoKasa DeviceManager for your OS from [official site](https://wiki-kasa.vchasno.ua/uk/DeviceManager/Start/intallation).
+
+# Setup Pos Terminal
+Please follow the instructions from [official site](https://wiki-kasa.vchasno.ua/uk/DeviceManager/Functionality/Devices/Terminals).
+
+## Install Bar Handler Proxy
+After you have installed VchasnoKasa DeviceManager and setup Pos Terminal, you need to install Bar Handler Proxy.
 
 ### For Android (via Termux)
 
@@ -40,10 +136,10 @@ This script sets up an HTTPS proxy server for local development, allowing you to
    ```bash
    ./android-setup.sh
    ```
-   - Replace `[port]` with the port your local server is running on (default: `3939`).
 
 7. **Add the Certificate to Trusted Stores**:
-   - Install the certificate via **Settings → Security → Install Certificate**.
+   - Install the certificate via **Settings → Security → Install Certificate → CA Certificate**.
+   - Certificate should be located at Tremux storage: `bar-handler-proxy/certs/cert.pem`.
 
 ---
 
@@ -76,9 +172,8 @@ This script sets up an HTTPS proxy server for local development, allowing you to
 
 5. **Run the Script**:
    ```bash
-   ./setup-bar-handler-proxy.sh [port]
+   ./setup-bar-handler-proxy.sh
    ```
-   - Replace `[port]` with the port your local server is running on (default: `3939`).
 
 6. **Add the Certificate to Windows Trusted Store**:
    - The script attempts to add the certificate automatically via PowerShell. If it fails:
@@ -92,32 +187,5 @@ This script sets up an HTTPS proxy server for local development, allowing you to
         - Choose **Local Machine**.
         - Select **Trusted Root Certification Authorities** as the destination.
 
-7. **Access the Proxy**:
-   Open your browser and navigate to:
-   ```
-   https://<your-WSL-IP>
-   ```
-   - The script detects and displays the WSL IP during execution.
-
----
-
-## Troubleshooting
-
-### Common Issues
-1. **Browser Warning (Certificate Invalid):**
-   - Ensure the certificate was added to the trusted store on your device.
-   - Verify the correct IP address is used during the certificate generation.
-
-2. **ERR_SSL_KEY_USAGE_INCOMPATIBLE:**
-   - Ensure the script generates the certificate with proper `keyUsage` and `extendedKeyUsage` fields.
-
-3. **Windows Certificate Not Recognized:**
-   - Manually install the certificate as described in the "Add the Certificate to Trusted Stores" section.
-
-### Verifying the Proxy
-Test the HTTPS proxy from your terminal:
-```bash
-curl -k https://<your-ip-address>
-```
 
 ---
