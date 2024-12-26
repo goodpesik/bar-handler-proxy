@@ -23,7 +23,11 @@ pkg update && pkg upgrade -y
 
 # Install required packages
 echo "Installing dependencies..."
-pkg install -y nodejs openssl openssl-tool termux-tools termux-setup-storage
+pkg install nodejs 
+pkg install openssl 
+pkg install openssl-tool 
+pkg install termux-tools 
+termux-setup-storage
 
 # Generate OpenSSL configuration file
 echo "Creating OpenSSL configuration file..."
