@@ -33,7 +33,6 @@ cat > "$OPENSSL_CNF" << 'EOF'
 default_bits       = 2048
 default_md         = sha256
 distinguished_name = req_distinguished_name
-x509_extensions    = v3_ca
 prompt             = no
 
 [req_distinguished_name]
@@ -42,12 +41,18 @@ ST = State
 L  = City
 O  = Organization
 OU = Unit
-CN = Custom CA
+CN = localhost
 
 [v3_ca]
-subjectAltName = @alt_names
 basicConstraints = critical,CA:true
 keyUsage = critical,keyCertSign,cRLSign
+subjectAltName = @alt_names
+
+[v3_req]
+basicConstraints = CA:FALSE
+keyUsage = critical,digitalSignature,keyEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
 
 [alt_names]
 DNS.1 = localhost
@@ -69,7 +74,7 @@ fi
 if [ ! -f "$SERVER_CERT_FILE" ] || [ ! -f "$SERVER_KEY_FILE" ]; then
   echo "Generating server certificate..."
   openssl req -new -nodes -newkey rsa:2048 -keyout "$SERVER_KEY_FILE" -out "$SERVER_CSR_FILE" -subj "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=localhost"
-  openssl x509 -req -in "$SERVER_CSR_FILE" -CA "$CA_CERT_FILE" -CAkey "$CA_KEY_FILE" -CAcreateserial -out "$SERVER_CERT_FILE" -days 365 -extfile <(printf "subjectAltName=DNS:localhost,IP:127.0.0.1") -extensions v3_ca
+  openssl x509 -req -in "$SERVER_CSR_FILE" -CA "$CA_CERT_FILE" -CAkey "$CA_KEY_FILE" -CAcreateserial -out "$SERVER_CERT_FILE" -days 365 -extfile "$OPENSSL_CNF" -extensions v3_req
   echo "Server certificate generated and signed by CA."
 else
   echo "Server certificates already exist. Skipping generation."
