@@ -84,8 +84,8 @@ app.use('/', createProxyMiddleware({
 }));
 
 const httpsOptions = {
-    key: fs.readFileSync('${CERT_DIR}/key.pem'),
-    cert: fs.readFileSync('${CERT_DIR}/cert.pem'),
+    key: fs.readFileSync('${CERT_DIR}/ca_key.pem'),
+    cert: fs.readFileSync('${CERT_DIR}/ca_cert.pem'),
 };
 
 https.createServer(httpsOptions, app).listen(9999, '0.0.0.0', () => {
