@@ -69,7 +69,7 @@ fi
 if [ ! -f "$SERVER_CERT_FILE" ] || [ ! -f "$SERVER_KEY_FILE" ]; then
   echo "Generating server certificate..."
   openssl req -new -nodes -newkey rsa:2048 -keyout "$SERVER_KEY_FILE" -out "$SERVER_CSR_FILE" -subj "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=localhost"
-  openssl x509 -req -in "$SERVER_CSR_FILE" -CA "$CA_CERT_FILE" -CAkey "$CA_KEY_FILE" -CAcreateserial -out "$SERVER_CERT_FILE" -days 365 -extfile <(printf "subjectAltName=DNS:localhost,IP:127.0.0.1") -extensions v3_req
+  openssl x509 -req -in "$SERVER_CSR_FILE" -CA "$CA_CERT_FILE" -CAkey "$CA_KEY_FILE" -CAcreateserial -out "$SERVER_CERT_FILE" -days 365 -extfile <(printf "subjectAltName=DNS:localhost,IP:127.0.0.1") -extensions v3_ca
   echo "Server certificate generated and signed by CA."
 else
   echo "Server certificates already exist. Skipping generation."
