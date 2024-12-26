@@ -6,6 +6,7 @@ CERT_DIR="certs"
 CERT_FILE="$CERT_DIR/cert.pem"
 KEY_FILE="$CERT_DIR/key.pem"
 OPENSSL_CNF="$CERT_DIR/openssl.cnf"
+PKCS12_FILE="$CERT_DIR/cert.p12"
 
 # Check for provided port
 if [ ! -z "$1" ]; then
@@ -55,6 +56,8 @@ if [ ! -f "$CERT_FILE" ] || [ ! -f "$KEY_FILE" ]; then
   echo "Generating self-signed certificate with SAN..."
   openssl genrsa -out "$KEY_FILE" 2048
   openssl req -new -x509 -days 365 -key "$KEY_FILE" -out "$CERT_FILE" -config "$OPENSSL_CNF"
+   echo "Certificate generated. Creating PKCS#12 file..."
+  openssl pkcs12 -export -out "$PKCS12_FILE" -inkey "$KEY_FILE" -in "$CERT_FILE" -name "Localhost Certificate" -password pass:1111
   echo "Certificate generated. Please add it to your Android trusted store."
   echo "1. Copy $CERT_FILE to your Android storage:"
   echo "   cp $CERT_FILE /storage/emulated/0/cert.pem"
