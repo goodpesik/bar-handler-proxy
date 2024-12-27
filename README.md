@@ -45,6 +45,16 @@
    - Встановіть сертифікат через **Settings → Security → Install Certificate → CA Certificate**.
    - Сертифікат має бути розташований у сховищі Termux: `bar-handler-proxy/certs/cert.pem`.
 
+8. **Додайте адресу проксі до налаштувань в Bar Handler**:
+   - Відкрийте **Bar Handler**.
+   - Перейдіть в **Налаштування → Інтеграції**.
+   - Увімкніть тоггл **Використовувати ВчасноКаса Device Manager**.
+   - У поле **DeviceManager Url** вкажіть адресу проксі, яку вказано в Termux після запуску скріпта /android-setup.sh. Наприклад: `http://localhost:9999`.
+   - Увімкніть тоггл **Увімкнути POS термінал** та натисніть кнопку **Перевірка статусу**, якщо все добре, покажчик поруч з **
+Увімкнути POS термінал** повинен стати зеленим.
+   - Після цього збережіть налаштування.
+   - Тоггл **Увімкнути прінтер** наразі не працює та знаходиться в розробці.
+
 ---
 
 ### Для Windows (через WSL)
@@ -91,6 +101,15 @@
         - Оберіть **Локальна машина**.
         - Вкажіть **Trusted Root Certification Authorities** як місце встановлення..
 
+7. **Додайте адресу проксі до налаштувань в Bar Handler**:
+   - Відкрийте **Bar Handler**.
+   - Перейдіть в **Налаштування → Інтеграції**.
+   - Увімкніть тоггл **Використовувати ВчасноКаса Device Manager**.
+   - У поле **DeviceManager Url** вкажіть адресу проксі, яку вказано в Termux після запуску скріпта /android-setup.sh. Наприклад: `http://localhost:9999`.
+   - Увімкніть тоггл **Увімкнути POS термінал** та натисніть кнопку **Перевірка статусу**, якщо все добре, покажчик поруч з **
+Увімкнути POS термінал** повинен стати зеленим.
+   - Після цього збережіть налаштування.
+   - Тоггл **Увімкнути прінтер** наразі не працює та знаходиться в розробці.
 
 ---
 
@@ -187,5 +206,13 @@ After you have installed VchasnoKasa DeviceManager and setup Pos Terminal, you n
         - Choose **Local Machine**.
         - Select **Trusted Root Certification Authorities** as the destination.
 
-
+7. **Add the proxy address to the settings in Bar Handler**:
+   - Open **Bar Handler**.
+   - Got to **Settings → Integrations**.
+   - Enable the toggle **Use VchasnoKasa Device Manager**.
+   - In the **DeviceManager Url**  field, specify the proxy address provided in Termux after running the /android-setup.sh script. For example: `http://localhost:9999`.
+   - Enable the toggle  **Enable POS terminal** and click the **Check Status**, button. If everything is configured correctly, the indicator next to **Enable POS terminal** should turn green.
+   - After this, save the settings.
+   - The toggle **Enable printer** is currently not functional and is under development.
+   
 ---

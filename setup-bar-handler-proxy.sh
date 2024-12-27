@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# 1. Перевірка параметра порту
 if [ -z "$1" ]; then
     echo "No port specified. Using default port 3939."
     PORT=3939
@@ -9,7 +8,6 @@ else
     echo "Using specified port: $PORT"
 fi
 
-# 2. Визначення операційної системи
 OS_TYPE=$(uname)
 IS_ANDROID=false
 IS_WSL=false
@@ -35,15 +33,12 @@ else
     exit 1
 fi
 
-# 3. Оновлення системи
 echo "Updating system..."
 sudo apt update && sudo apt upgrade -y
 
-# 4. Встановлення Node.js та npm
 echo "Installing Node.js..."
 sudo apt install -y nodejs npm openssl
 
-# 5. Генерація самопідписаного сертифіката
 echo "Generating self-signed certificate for $IP_ADDRESS..."
 CERT_DIR="./certs"
 mkdir -p $CERT_DIR
@@ -71,7 +66,6 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
     -out $CERT_DIR/cert.pem \
     -config cert_config.cnf
 
-# 6. Додавання сертифіката до довірених
 if [[ "$IS_ANDROID" == true ]]; then
     echo "Android detected. Please manually add the certificate to your trusted store:"
     echo "1. Copy the cert.pem to your Android storage:"
@@ -90,7 +84,6 @@ else
     exit 1
 fi
 
-# 7. Створення Node.js-проксі
 echo "Setting up HTTPS proxy server..."
 
 cat <<EOL > https-proxy.js
@@ -117,10 +110,8 @@ https.createServer(httpsOptions, app).listen(9999, '0.0.0.0', () => {
 });
 EOL
 
-# 8. Встановлення залежностей для Node.js
 echo "Installing Node.js dependencies..."
 npm install express http-proxy-middleware
 
-# 9. Запуск HTTPS Proxy
 echo "Starting HTTPS proxy server..."
 node https-proxy.js

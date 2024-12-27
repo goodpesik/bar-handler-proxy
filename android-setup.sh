@@ -10,18 +10,15 @@ SERVER_KEY_FILE="$CERT_DIR/server_key.pem"
 SERVER_CSR_FILE="$CERT_DIR/server_csr.pem"
 OPENSSL_CNF="$CERT_DIR/openssl.cnf"
 
-# Check for provided port
 if [ ! -z "$1" ]; then
   PORT=$1
 else
   echo "No port specified. Using default port $PORT."
 fi
 
-# Ensure system is up to date
 echo "Updating system..."
 pkg update && pkg upgrade -y
 
-# Install required packages
 echo "Installing dependencies..."
 pkg install nodejs 
 pkg install openssl 
@@ -29,7 +26,6 @@ pkg install openssl-tool
 pkg install termux-tools 
 termux-setup-storage
 
-# Generate OpenSSL configuration file
 echo "Creating OpenSSL configuration file..."
 mkdir -p $CERT_DIR
 cat > "$OPENSSL_CNF" << 'EOF'
@@ -63,7 +59,6 @@ DNS.1 = localhost
 IP.1 = 127.0.0.1
 EOF
 
-# Generate CA certificate
 echo "Checking for CA certificates..."
 if [ ! -f "$CA_CERT_FILE" ] || [ ! -f "$CA_KEY_FILE" ]; then
   echo "Generating self-signed CA certificate..."
@@ -74,7 +69,6 @@ else
   echo "CA certificates already exist. Skipping generation."
 fi
 
-# Generate server certificate
 if [ ! -f "$SERVER_CERT_FILE" ] || [ ! -f "$SERVER_KEY_FILE" ]; then
   echo "Generating server certificate..."
   openssl req -new -nodes -newkey rsa:2048 -keyout "$SERVER_KEY_FILE" -out "$SERVER_CSR_FILE" -subj "/C=US/ST=State/L=City/O=Organization/OU=Unit/CN=localhost"
@@ -84,7 +78,6 @@ else
   echo "Server certificates already exist. Skipping generation."
 fi
 
-# Create simple HTTPS proxy server
 IP_ADDRESS="localhost"
 PROXY_SCRIPT="https-proxy.js"
 cat <<EOL > https-proxy.js
@@ -115,6 +108,5 @@ EOL
 echo "Installing Node.js dependencies..."
 npm install http-proxy http-proxy-middleware express
 
-# Start the HTTPS proxy server
 echo "Starting HTTPS proxy server on port $PORT..."
 node $PROXY_SCRIPT
